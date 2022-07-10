@@ -1,0 +1,112 @@
+# 2022년 7월 7일
+
+## 쿼리를 작성해보고 쿼리의 성능을 높이려는 노력을 해보았는가?  
+explain을 사용한 것에 대해 말을 하면된다.
+
+## equals()란? 
+
+2개의 객체가 동일한지 검사하기 위해 사용된다.
+즉, 2개의 객체가 가리키는 곳이 동일한 메모리 주소일 경우에만 동일한 객체가 된다.
+
+'''java
+
+public boolean equals(Object obj) {
+    return (this == obj);
+}
+
+'''
+
+String class에서는 Object 클래스에서 선언된 equals() 메소드를 오버라이딩하여 문자를 비교하는 것을 추가하였다.
+
+'''java
+
+public boolean equals(Object anObject) {
+        if (this == anObject) {
+            return true;
+        }
+        if (anObject instanceof String) {
+            String anotherString = (String)anObject;
+            int n = value.length;
+            if (n == anotherString.value.length) {
+                char v1[] = value;
+                char v2[] = anotherString.value;
+                int i = 0;
+                while (n-- != 0) {
+                    if (v1[i] != v2[i])
+                        return false;
+                    i++;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+'''
+
+## hashCode()란?
+
+int hashCode()로 정의된 hashCode 메소드는 실행 중에(Runtime) 객체의 유일한 integer값을 반환한다.   
+Object 클래스에서는 heap에 저장된 객체의 메모리 주소를 반환하도록 되어있다. (항상 그런 것은 아니다.)  
+
+## equals와 hashcode와의 관계
+
+동일한 객체는 동일한 메모리 주소를 갖는다는 것을 의미하므로, 동일한 객체는 동일한 해시코드를 가져야 한다.   
+그렇기 때문에 만약 우리가 equals() 메소드를 오버라이드 한다면, hashCode() 메소드도 오버라이드 되어야 한다.   
+이러한 equals와 hashCode의 관계를 정의하면 다음과 같다.   
+
+Java 프로그램을 실행하는 동안 equals에 사용된 정보가 수정되지 않았다면, hashCode는 항상 동일한 정수값을 반환해야 한다.   
+(Java의 프로그램을 실행할 때 마다 달라지는 것은 상관이 없다.)  
+두 객체가 equals()에 의해 동일하다면, 두 객체의 hashCode() 값도 일치해야 한다.   
+두 객체가 equals()에 의해 동일하지 않다면, 두 객체의 hashCode() 값은 일치하지 않아도 된다.   
+
+즉, obj1.equals(obj2) == True 이면 hashCode(obj1) == hashCode(obj2) 이여야하지만  hashCode(obj1) == hashCode(obj2) 라고 obj1.equals(obj2) == True일 필요는 없다. 
+하지만 우리는 다른 객체에 대해 동일한 hashCode를 생성한다면 hashTable을 생성하는데 불이익을 받을 수 있음을 인지하고 있어야 한다.
+
+참고: https://mangkyu.tistory.com/101
+
+hashCode를 equals와 함께 재정의하지 않으면 코드가 예상과 다르게 작동하는 위와 같은 문제를 일으킨다.    
+정확히 말하면 hash 값을 사용하는 Collection(HashSet, HashMap, HashTable)을 사용할 때 문제가 발생한다.   
+
+
+## enum이란?
+
+enum이란 enumerated type의 줄임말로 열거형이라고 부르기도 하는데 컴퓨터 프로그래밍에서 열거형(enumerated type, enumeration)은 요소, 멤버라 불리는 명명된 값의 집합을 이루는 자료형이다.    
+열거자 이름들은 일반적으로 해당 언어의 상수 역할을 하는 식별자이다.   
+
+참고: https://eatnows.tistory.com/91
+
+
+## 문자열
+
+### String vs StringBuffer/ StringBuilder
+
+String은 불변성을 가지고 있다. 
+
+StringBuffer/ StringBuilder는 가변성을 가지고 있다.
+StringBuffer/StringBuilder 는 가변성 가지기 때문에 .append() .delete() 등의 API를 이용하여 동일 객체내에서 문자열을 변경하는 것이 가능합니다. 
+
+
+### StringBuffer vs StringBuilder
+
+가장 큰 차이점은 동기화의 유무이다.
+StringBuffer는 동기화 키워드를 지원하여 멀티쓰레드 환경에서 안전하다는 점(thread-safe) 입니다. (참고로 String도 불변성을 가지기때문에 마찬가지로  멀티쓰레드 환경에서의 안정성(thread-safe)을 가지고 있습니다.)
+
+반대로 StringBuilder는 동기화를 지원하지 않기때문에 멀티쓰레드 환경에서 사용하는 것은 적합하지 않지만 동기화를 고려하지 않는 만큼 단일쓰레드에서의 성능은 StringBuffer 보다 뛰어납니다.
+
+참고: https://ifuwanna.tistory.com/221
+
+
+## JVM이란?
+
+jvm은 자바 가상 머신으로 java와 os의 중개자 역할을 한다. 따라서 java가 os에 구애받지 않고 작동할 수 있게 해주는 역할은 한다.
+
+### jvm의 동작방식 -> 면접시 4가지 정도 말하면 될듯
+1. 프로그램이 실행되면 jvm은 os로 부터 필요한 메모리를 할당받는다
+2. 자바소스 코드를 컴파일로 .class 파일로 변환해준다.
+3. 클래스로더가 Runtime Data Areas의 Method Area에 클래스 파일을 jvm에을 로드 시켜준다.
+4. Method Area에 올라온 class파일을 execution engine이 실행시켜준다.
+
+
+
+

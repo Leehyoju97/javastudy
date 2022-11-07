@@ -12,12 +12,19 @@
 
 2. advice
 - aspect가 무엇을 언제할지 정의한다.
+- Before : 메소드 실행 전
+- After : AfterReturning + AfterThrowing
+- AfterReturning : 정상 반환 이후
+- AfterThrowing : 예외 발생 이후
+- Around : before + after
 
 3. pointcut
 - advice를 정의할 jointpoint를 선별하는 기능이다.
+- 실제 advice가 적용되는 시점
 
 4. target
 - 부가기능을 적용할 대상
 
 5. jointpoint
 - advice가 적용될 위치를 말한다. (spring에서는 메소드조인포인트만 제공)
+- 메서드, 필드, 객체, 생성자 등
